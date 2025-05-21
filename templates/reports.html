@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes{% endblock %}
+
+{% block content %}
+<div class="reports-container">
+    <h2><i class="fas fa-file-alt"></i> Generación de Reportes</h2>
+    
+    <div class="report-cards">
+        <div class="report-card">
+            <h3><i class="fas fa-boxes"></i> Reporte de Inventario</h3>
+            <p>Genera un reporte completo del inventario actual</p>
+            <div class="report-actions">
+                <a href="{{ url_for('generate_inventory_report', formato='pdf') }}" class="btn btn-pdf">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </a>
+                <a href="{{ url_for('generate_inventory_report', formato='excel') }}" class="btn btn-excel">
+                    <i class="fas fa-file-excel"></i> Excel
+                </a>
+            </div>
+        </div>
+        
+        <div class="report-card">
+            <h3><i class="fas fa-chart-line"></i> Reporte de Ventas</h3>
+            <p>Reporte detallado de ventas por período</p>
+            <form method="GET" action="{{ url_for('generate_sales_report') }}" class="report-form">
+                <div class="form-group">
+                    <label for="fecha_inicio">Fecha Inicio:</label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio" required>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_fin">Fecha Fin:</label>
+                    <input type="date" id="fecha_fin" name="fecha_fin" required>
+                </div>
+                <div class="form-group">
+                    <label>Formato:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="formato" value="pdf" checked> PDF</label>
+                        <label><input type="radio" name="formato" value="excel"> Excel</label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-download"></i> Generar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

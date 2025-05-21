@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Productos{% endblock %}
+
+{% block content %}
+<div class="products-container">
+    <div class="page-header">
+        <h2><i class="fas fa-boxes"></i> Gestión de Productos</h2>
+        <div class="actions">
+            <a href="{{ url_for('add_product') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nuevo Producto
+            </a>
+        </div>
+    </div>
+    
+    <div class="search-bar">
+        <form method="GET" action="{{ url_for('products') }}">
+            <input type="text" name="search" placeholder="Buscar productos..." value="{{ search }}">
+            <button type="submit" class="btn btn-secondary">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+        </form>
+    </div>
+    
+    {% if productos %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Categoría</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.codigo_barras or 'N/A' }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>${{ "%.2f"|format(producto.precio) }}</td>
+                <td class="{{ 'stock-warning' if producto.stock < producto.stock_minimo else '' }}">
+                    {{ producto.stock }}
+                </td>
+                <td>{{ producto.categoria }}</td>
+                <td class="actions">
+                    <a href="{{ url_for('edit_product', id=producto._id) }}" class="btn btn-sm btn-edit">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{{ url_for('delete_product', id=producto._id) }}" class="btn btn-sm btn-delete" onclick="return confirm('¿Eliminar este producto?')">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="pagination">
+        {% if page > 1 %}
+        <a href="{{ url_for('products', page=page-1, search=search) }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Anterior
+        </a>
+        {% endif %}
+        
+        <span>Página {{ page }} de {{ total_pages }}</span>
+        
+        {% if page < total_pages %}
+        <a href="{{ url_for('products', page=page+1, search=search) }}" class="btn btn-secondary">
+            Siguiente <i class="fas fa-arrow-right"></i>
+        </a>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="no-results">
+        <p>No se encontraron productos</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar Sesión - Ferretería{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                    url('https://img.freepik.com/fotos-premium/estante-ferreteria-tienda-bricolaje_8087-2334.jpg') no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .auth-container {
+        width: 100%;
+        max-width: 400px;
+        padding: 20px;
+    }
+    
+    .auth-form {
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .auth-form h2 {
+        color: #d35400;
+        text-align: center;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: 500;
+    }
+    
+    .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        transition: border 0.3s;
+    }
+    
+    .form-group input:focus {
+        border-color: #d35400;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(211, 84, 0, 0.2);
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 12px;
+        background-color: #d35400;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+        background-color: #e67e22;
+    }
+    
+    .auth-links {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .auth-links a {
+        color: #d35400;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+    
+    .auth-links a:hover {
+        color: #e67e22;
+        text-decoration: underline;
+    }
+    
+    .logo {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .logo i {
+        font-size: 40px;
+        color: #d35400;
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-form">
+        <div class="logo">
+            <i class="fas fa-tools"></i>
+        </div>
+        <h2>Iniciar Sesión</h2>
+        <form action="{{ url_for('login') }}" method="POST">
+            <div class="form-group">
+                <label for="username">Usuario:</label>
+                <input type="text" id="username" name="username" required placeholder="Ingresa tu usuario">
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required placeholder="Ingresa tu contraseña">
+            </div>
+            <button type="submit" class="btn">Ingresar</button>
+        </form>
+        <div class="auth-links">
+            {% if 'register' in globals() %}
+                <a href="{{ url_for('register') }}">¿No tienes cuenta? Regístrate</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

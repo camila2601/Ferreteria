@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2><i class="fas fa-tachometer-alt"></i> Panel de Control</h2>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-boxes"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Productos</h3>
+                <p>{{ total_productos }}</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Clientes</h3>
+                <p>{{ total_clientes }}</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Ventas Hoy</h3>
+                <p>{{ ventas_hoy }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="dashboard-sections">
+        <section class="low-stock">
+            <h3><i class="fas fa-exclamation-triangle"></i> Productos con Stock Bajo</h3>
+            {% if productos_bajo_stock %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Stock Actual</th>
+                        <th>Stock Mínimo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos_bajo_stock %}
+                    <tr>
+                        <td>{{ producto.nombre }}</td>
+                        <td class="stock-warning">{{ producto.stock }}</td>
+                        <td>{{ producto.stock_minimo }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No hay productos con stock bajo</p>
+            {% endif %}
+        </section>
+        
+        <section class="recent-sales">
+            <h3><i class="fas fa-history"></i> Últimas Ventas</h3>
+            {% if ultimas_ventas %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Productos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venta in ultimas_ventas %}
+                    <tr>
+                        <td>{{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>${{ "%.2f"|format(venta.total) }}</td>
+                        <td>{{ venta.productos|length }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No hay ventas recientes</p>
+            {% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}

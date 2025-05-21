@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Ventas{% endblock %}
+
+{% block content %}
+<div class="sales-container">
+    <div class="page-header">
+        <h2><i class="fas fa-cash-register"></i> Registro de Ventas</h2>
+        <div class="actions">
+            <a href="{{ url_for('new_sale') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nueva Venta
+            </a>
+        </div>
+    </div>
+    
+    {% if ventas %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>N° Venta</th>
+                <th>Productos</th>
+                <th>Total</th>
+                <th>Método Pago</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venta in ventas %}
+            <tr>
+                <td>{{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td>V-{{ venta._id }}</td>
+                <td>{{ venta.productos|length }}</td>
+                <td>${{ "%.2f"|format(venta.total) }}</td>
+                <td>{{ venta.metodo_pago|capitalize }}</td>
+                <td class="actions">
+                    <a href="#" class="btn btn-sm btn-view" title="Ver detalle">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="#" class="btn btn-sm btn-print" title="Imprimir">
+                        <i class="fas fa-print"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="no-results">
+        <p>No hay ventas registradas</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
