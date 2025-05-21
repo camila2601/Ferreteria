@@ -16,11 +16,20 @@ app.secret_key = os.urandom(24)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 # Configuración de MongoDB Atlas
-password = quote_plus("dKpRYN4lPJul9qwl")  # Reemplaza con tu contraseña real
-app.config["MONGO_URI"] = f"mongodb+srv://myAtlasDBUser:{password}@ferreteria-db.lays9fv.mongodb.net/ferreteria-app"
+
+
+password = quote_plus("GA239XY562HwXPyL")  # Escapa caracteres especiales si los hay
+app.config["MONGO_URI"] = f"mongodb+srv://angaritacamila05:{password}@ferreteriadb.nnmpeau.mongodb.net/?retryWrites=true&w=majority&appName=ferreteriaDB"
+
 
 # Inicializar la conexión a MongoDB
-mongo = PyMongo(app)
+try:
+    mongo = PyMongo(app)
+    # Intentar una operación simple para verificar la conexión
+    mongo.cx.server_info()
+    print("✅ Conexión a MongoDB exitosa.")
+except Exception as e:
+    print(f"❌ Error al conectar con MongoDB: {e}")
 
 # Context processor para variables globales
 @app.context_processor
