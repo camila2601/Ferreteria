@@ -41,20 +41,20 @@
                 <td style="padding: 0.5rem;">{{ producto.codigo_barras or 'N/A' }}</td>
                 <td style="padding: 0.5rem;">{{ producto.nombre }}</td>
                 <td style="padding: 0.5rem;">${{ "%.2f"|format(producto.precio) }}</td>
-                <td class="{% if producto.stock < producto.stock_minimo %}stock-warning{% endif %}" style="padding: 0.5rem;">{{ producto.stock }}</td>
+                <td class="{% if producto.stock < (producto.stock_minimo|default(0)) %}stock-warning{% endif %}" style="padding: 0.5rem;">{{ producto.stock }}</td>
                 <td style="padding: 0.5rem;">{{ producto.categoria }}</td>
                 <td class="actions" style="padding: 0.5rem; display: flex; gap: 0.3rem;">
                     <button class="btn btn-sm btn-edit" style="background: var(--secondary-color); color: #0a30c6; border-radius: 4px; padding: 0.3rem 0.6rem; display: inline-flex; align-items: center; border: none; cursor: pointer; font-size: 1rem;" onclick="openEditModal(this)" 
                         data-id="{{ producto._id }}"
                         data-nombre="{{ producto.nombre }}"
-                        data-codigo_barras="{{ producto.codigo_barras }}"
-                        data-precio="{{ producto.precio }}"
-                        data-costo="{{ producto.costo }}"
-                        data-stock="{{ producto.stock }}"
-                        data-stock_minimo="{{ producto.stock_minimo }}"
-                        data-categoria="{{ producto.categoria }}"
-                        data-proveedor="{{ producto.proveedor }}"
-                        data-descripcion="{{ producto.descripcion }}">
+                        data-codigo_barras="{{ producto.codigo_barras|default('') }}"
+                        data-precio="{{ producto.precio|default(0) }}"
+                        data-costo="{{ producto.costo|default(0) }}"
+                        data-stock="{{ producto.stock|default(0) }}"
+                        data-stock_minimo="{{ producto.stock_minimo|default(0) }}"
+                        data-categoria="{{ producto.categoria|default('') }}"
+                        data-proveedor="{{ producto.proveedor|default('') }}"
+                        data-descripcion="{{ producto.descripcion|default('') }}">
                         <i class="fas fa-edit"></i>
                     </button>
                     <a href="{{ url_for('eliminar_producto', id=producto._id) }}" class="btn btn-sm btn-delete" style="background: #e74c3c; color: #fff; border-radius: 4px; padding: 0.3rem 0.6rem; text-decoration: none; display: inline-flex; align-items: center; transition: background 0.2s; font-size: 1rem;" onclick="return confirm('¿Eliminar este producto?')">

@@ -170,8 +170,14 @@ def mostrar_productos():
 def agregar_producto():
     producto = {
         "nombre": request.form["nombre"],
+        "codigo_barras": request.form.get("codigo_barras", ""),
         "precio": float(request.form["precio"]),
-        "stock": int(request.form["stock"])
+        "costo": float(request.form["costo"]),
+        "stock": int(request.form["stock"]),
+        "stock_minimo": int(request.form["stock_minimo"]),
+        "categoria": request.form["categoria"],
+        "proveedor": request.form.get("proveedor", ""),
+        "descripcion": request.form.get("descripcion", "")
     }
     db.productos.insert_one(producto)
     return redirect(url_for('mostrar_productos'))
@@ -180,6 +186,12 @@ def agregar_producto():
 def eliminar_producto(id):
     db.productos.delete_one({"_id": ObjectId(id)})
     return redirect(url_for('mostrar_productos'))
+
+@app.route('/nuevo_producto')
+def nuevo_producto():
+    categorias = list(db.categorias.find()) if 'categorias' in db.list_collection_names() else []
+    proveedores = list(db.proveedores.find()) if 'proveedores' in db.list_collection_names() else []
+    return render_template('add_product.html', categorias=categorias, proveedores=proveedores)
 
 # ---------- CRUD CLIENTES ----------
 @app.route('/clientes')
@@ -260,24 +272,119 @@ def reporte_excel():
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
         df.to_excel(writer, sheet_name='Ventas', index=False)
+        workbook = writer.book
+        worksheet = writer.sheets['Ventas']
+        # Formato de encabezado
+        header_format = workbook.add_format({
+            'bold': True,
+            'text_wrap': True,
+            'valign': 'middle',
+            'align': 'center',
+            'fg_color': '#FFB366',
+            'border': 1
+        })
+        for col_num, value in enumerate(df.columns.values):
+            worksheet.write(0, col_num, value, header_format)
+            worksheet.set_column(col_num, col_num, 18)
+        # Bordes para toda la tabla
+        table_format = workbook.add_format({'border': 1})
+        worksheet.conditional_format(1, 0, len(df), len(df.columns)-1, {'type': 'no_blanks', 'format': table_format})
     output.seek(0)
     return send_file(output, download_name='reporte_ventas.xlsx', as_attachment=True)
 
 @app.route('/reporte_pdf')
 def reporte_pdf():
     data = list(db.ventas.find())
-    pdf = FPDF()
+    pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="Reporte de Ventas", ln=True, align='C')
-    pdf.ln(10)
+    pdf.set_font("Arial", 'B', 16)
+    pdf.cell(0, 10, txt="Reporte de Ventas", ln=True, align='C')
+    pdf.ln(5)
+    pdf.set_font("Arial", 'B', 12)
+    pdf.set_fill_color(230, 230, 230)
+    # Encabezados de tabla
+    pdf.cell(45, 10, 'ProductoID', 1, 0, 'C', 1)
+    pdf.cell(45, 10, 'ClienteID', 1, 0, 'C', 1)
+    pdf.cell(25, 10, 'Cantidad', 1, 0, 'C', 1)
+    pdf.cell(30, 10, 'Total', 1, 0, 'C', 1)
+    pdf.cell(35, 10, 'Fecha', 1, 0, 'C', 1)
+    pdf.cell(25, 10, 'Tipo', 1, 1, 'C', 1)
+    pdf.set_font("Arial", '', 11)
+    row_height = 9
     for v in data:
-        texto = f"ProductoID: {v['id_producto']} - ClienteID: {v['id_cliente']} - Cantidad: {v['cantidad']} - Total: {v['total']} - Fecha: {v['fecha'].strftime('%Y-%m-%d')} - Tipo: {v['tipo']}"
-        pdf.multi_cell(0, 10, txt=texto)
-    output = io.BytesIO()
-    pdf.output(output)
+        pdf.cell(45, row_height, str(v.get('id_producto','')), 1, 0, 'C')
+        pdf.cell(45, row_height, str(v.get('id_cliente','')), 1, 0, 'C')
+        pdf.cell(25, row_height, str(v.get('cantidad','')), 1, 0, 'C')
+        pdf.cell(30, row_height, f"${v.get('total',0):.2f}", 1, 0, 'C')
+        fecha = v.get('fecha')
+        if fecha:
+            fecha_str = fecha.strftime('%Y-%m-%d')
+        else:
+            fecha_str = ''
+        pdf.cell(35, row_height, fecha_str, 1, 0, 'C')
+        pdf.cell(25, row_height, str(v.get('tipo','')), 1, 1, 'C')
+    pdf_bytes = pdf.output(dest='S').encode('latin1')
+    output = io.BytesIO(pdf_bytes)
     output.seek(0)
     return send_file(output, download_name='reporte_ventas.pdf', as_attachment=True)
+
+@app.route('/reporte_inventario_pdf')
+def reporte_inventario_pdf():
+    productos = list(db.productos.find())
+    pdf = FPDF(orientation='L', unit='mm', format='A4')
+    pdf.add_page()
+    pdf.set_font("Arial", 'B', 16)
+    pdf.cell(0, 10, txt="Reporte de Inventario", ln=True, align='C')
+    pdf.ln(5)
+    pdf.set_font("Arial", 'B', 12)
+    pdf.set_fill_color(230, 230, 230)
+    pdf.cell(50, 10, 'Nombre', 1, 0, 'C', 1)
+    pdf.cell(35, 10, 'Código', 1, 0, 'C', 1)
+    pdf.cell(25, 10, 'Stock', 1, 0, 'C', 1)
+    pdf.cell(30, 10, 'Stock Min.', 1, 0, 'C', 1)
+    pdf.cell(30, 10, 'Precio', 1, 0, 'C', 1)
+    pdf.cell(40, 10, 'Categoría', 1, 1, 'C', 1)
+    pdf.set_font("Arial", '', 11)
+    for p in productos:
+        pdf.cell(50, 8, str(p.get('nombre','')), 1)
+        pdf.cell(35, 8, str(p.get('codigo_barras','')), 1)
+        pdf.cell(25, 8, str(p.get('stock',0)), 1)
+        pdf.cell(30, 8, str(p.get('stock_minimo',0)), 1)
+        pdf.cell(30, 8, f"${p.get('precio',0):.2f}", 1)
+        pdf.cell(40, 8, str(p.get('categoria','')), 1, 1)
+    pdf_bytes = pdf.output(dest='S').encode('latin1')
+    output = io.BytesIO(pdf_bytes)
+    output.seek(0)
+    return send_file(output, download_name='reporte_inventario.pdf', as_attachment=True)
+
+@app.route('/reporte_inventario_excel')
+def reporte_inventario_excel():
+    productos = list(db.productos.find())
+    for p in productos:
+        p['_id'] = str(p['_id'])
+    df = pd.DataFrame(productos)
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        df.to_excel(writer, sheet_name='Inventario', index=False)
+        workbook = writer.book
+        worksheet = writer.sheets['Inventario']
+        # Formato de encabezado
+        header_format = workbook.add_format({
+            'bold': True,
+            'text_wrap': True,
+            'valign': 'middle',
+            'align': 'center',
+            'fg_color': '#B6D7A8',
+            'border': 1
+        })
+        for col_num, value in enumerate(df.columns.values):
+            worksheet.write(0, col_num, value, header_format)
+            worksheet.set_column(col_num, col_num, 18)
+        # Bordes para toda la tabla
+        table_format = workbook.add_format({'border': 1})
+        worksheet.conditional_format(1, 0, len(df), len(df.columns)-1, {'type': 'no_blanks', 'format': table_format})
+    output.seek(0)
+    return send_file(output, download_name='reporte_inventario.xlsx', as_attachment=True)
 
 # ==============================================
 # RUTA DE ESTADO DE LA BASE DE DATOS
