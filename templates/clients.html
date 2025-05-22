@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Clientes{% endblock %}
+
+{% block content %}
+<div class="clients-container" style="max-width: 900px; margin: 2rem auto; padding: 1.2rem; background: rgba(61, 61, 61, 0.586); border-radius: 18px; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+        <h2 style="color: var(--primary-color); display: flex; align-items: center; gap: 0.7rem; font-size: 1.4rem;"><i class="fas fa-users"></i> Gestión de Clientes</h2>
+        <button class="btn btn-primary" style="background: var(--primary-color); color: #fff; padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; border: none;" onclick="openAddClientModal()">
+            <i class="fas fa-user-plus"></i> Agregar Cliente
+        </button>
+    </div>
+    {% if clientes %}
+    <div style="overflow-x:auto;">
+    <table class="data-table" style="width: 100%; border-collapse: collapse; background: #ea1818; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(52, 152, 219, 0.08); font-size: 0.98rem;">
+        <thead>
+            <tr style="background: var(--primary-color); color: #ffffff;">
+                <th style="padding: 0.5rem;">Nombre</th>
+                <th style="padding: 0.5rem;">Correo</th>
+                <th style="padding: 0.5rem;">Teléfono</th>
+                <th style="padding: 0.5rem;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr class="{% if loop.index0 % 2 == 0 %}even-row{% else %}odd-row{% endif %}">
+                <td style="padding: 0.5rem;">{{ cliente.nombre }}</td>
+                <td style="padding: 0.5rem;">{{ cliente.correo }}</td>
+                <td style="padding: 0.5rem;">{{ cliente.telefono }}</td>
+                <td style="padding: 0.5rem; display: flex; gap: 0.3rem;">
+                    <button class="btn btn-sm btn-edit" style="background: var(--secondary-color); color: #fff; border-radius: 4px; padding: 0.3rem 0.6rem; display: inline-flex; align-items: center; border: none; cursor: pointer; font-size: 1rem;" onclick="openEditClientModal(this)"
+                        data-id="{{ cliente._id }}"
+                        data-nombre="{{ cliente.nombre }}"
+                        data-correo="{{ cliente.correo }}"
+                        data-telefono="{{ cliente.telefono }}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <a href="{{ url_for('eliminar_cliente', id=cliente._id) }}" class="btn btn-sm btn-delete" style="background: #e74c3c; color: #fff; border-radius: 4px; padding: 0.3rem 0.6rem; text-decoration: none; display: inline-flex; align-items: center; transition: background 0.2s; font-size: 1rem;" onclick="return confirm('¿Eliminar este cliente?')">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <div class="no-results" style="text-align: center; margin-top: 2rem;">
+        <p style="color: #ffffff; font-size: 1.1rem; font-weight: 500;">No se encontraron clientes</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal para agregar cliente -->
+<div id="addClientModal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+    <div class="modal-content" style="background:#a7a3a3c0; border-radius:12px; max-width:400px; width:95%; margin:auto; padding:1.2rem 1rem; position:relative;">
+        <span class="close" onclick="closeAddClientModal()" style="position:absolute; top:0.7rem; right:1rem; font-size:1.7rem; color:#0c0c0c; cursor:pointer;">&times;</span>
+        <h3 style="color:var(--primary-color); margin-bottom:1rem; font-size:1.2rem;"><i class="fas fa-user-plus"></i> Agregar Cliente</h3>
+        <form id="addClientForm" method="POST" action="{{ url_for('agregar_cliente') }}">
+            <div class="form-group"><label>Nombre:</label><input type="text" name="nombre" required style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div class="form-group"><label>Correo:</label><input type="email" name="correo" required style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div class="form-group"><label>Teléfono:</label><input type="text" name="telefono" required style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div style="display:flex;justify-content:center;gap:1rem;margin-top:1rem;">
+                <button type="submit" class="btn btn-primary" style="background:var(--primary-color);color:#fff;padding:0.5rem 1.2rem;border-radius:6px;font-weight:600;font-size:1rem;">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal para editar cliente -->
+<div id="editClientModal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+    <div class="modal-content" style="background:#fff; border-radius:12px; max-width:400px; width:95%; margin:auto; padding:1.2rem 1rem; position:relative;">
+        <span class="close" onclick="closeEditClientModal()" style="position:absolute; top:0.7rem; right:1rem; font-size:1.7rem; color:#e74c3c; cursor:pointer;">&times;</span>
+        <h3 style="color:var(--primary-color); margin-bottom:1rem; font-size:1.2rem;"><i class="fas fa-edit"></i> Editar Cliente</h3>
+        <form id="editClientForm">
+            <input type="hidden" id="edit_id" name="id">
+            <div class="form-group"><label>Nombre:</label><input type="text" id="edit_nombre" name="nombre" required style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div class="form-group"><label>Correo:</label><input type="email" id="edit_correo" name="correo" required style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div class="form-group"><label>Teléfono:</label><input type="text" id="edit_telefono" name="telefono" required style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div style="display:flex;justify-content:center;gap:1rem;margin-top:1rem;">
+                <button type="submit" class="btn btn-primary" style="background:var(--primary-color);color:#fff;padding:0.5rem 1.2rem;border-radius:6px;font-weight:600;font-size:1rem;">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openAddClientModal() {
+    document.getElementById('addClientModal').style.display = 'flex';
+}
+function closeAddClientModal() {
+    document.getElementById('addClientModal').style.display = 'none';
+}
+function openEditClientModal(btn) {
+    document.getElementById('edit_id').value = btn.getAttribute('data-id');
+    document.getElementById('edit_nombre').value = btn.getAttribute('data-nombre');
+    document.getElementById('edit_correo').value = btn.getAttribute('data-correo');
+    document.getElementById('edit_telefono').value = btn.getAttribute('data-telefono');
+    document.getElementById('editClientModal').style.display = 'flex';
+}
+function closeEditClientModal() {
+    document.getElementById('editClientModal').style.display = 'none';
+}
+document.getElementById('addClientForm').onsubmit = function() {
+    setTimeout(() => closeAddClientModal(), 200);
+};
+document.getElementById('editClientForm').onsubmit = async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = Object.fromEntries(new FormData(form));
+    const response = await fetch('/editar_cliente/' + data.id, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+    if (response.ok) {
+        location.reload();
+    } else {
+        alert('Error al editar cliente');
+    }
+};
+</script>
+
+<style>
+.even-row { background: #f7f7f7; transition: background 0.2s; }
+.odd-row { background: #ffffff; transition: background 0.2s; }
+.data-table tr:hover { background: #f8d5ce !important; }
+.modal { display: none; }
+</style>
+{% endblock %}

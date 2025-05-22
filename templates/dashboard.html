@@ -81,7 +81,7 @@
                     <tr>
                         <td>{{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
                         <td>${{ "%.2f"|format(venta.total) }}</td>
-                        <td>{{ venta.productos|length }}</td>
+                        <td>{{ venta.cantidad }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

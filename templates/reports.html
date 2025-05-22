@@ -3,46 +3,32 @@
 {% block title %}Reportes{% endblock %}
 
 {% block content %}
-<div class="reports-container">
-    <h2><i class="fas fa-file-alt"></i> Generación de Reportes</h2>
-    
-    <div class="report-cards">
-        <div class="report-card">
-            <h3><i class="fas fa-boxes"></i> Reporte de Inventario</h3>
-            <p>Genera un reporte completo del inventario actual</p>
-            <div class="report-actions">
-                <a href="{{ url_for('generate_inventory_report', formato='pdf') }}" class="btn btn-pdf">
+<div class="reports-container" style="max-width: 800px; margin: 2rem auto; padding: 2rem; background: rgba(50, 49, 49, 0.597); border-radius: 16px; box-shadow: 0 8px 32px 0 rgba(245, 246, 248, 0.13);">
+    <h2 style="color: var(--primary-color); display: flex; align-items: center; gap: 0.7rem; margin-bottom: 2rem;"><i class="fas fa-file-alt"></i> Generación de Reportes</h2>
+    <div class="report-cards" style="display: flex; gap: 2rem; flex-wrap: wrap;">
+        <div class="report-card" style="background: #0f0f0fcb; border-radius: 12px; box-shadow: 0 2px 12px rgba(239, 240, 241, 0.699); padding: 1.5rem 1.2rem; flex: 1 1 320px; min-width: 280px;">
+            <h3 style="color: var(--primary-color); font-size: 1.2rem; margin-bottom: 0.7rem;"><i class="fas fa-boxes"></i> Reporte de Inventario</h3>
+            <p style="color: #fff;">Genera un reporte completo del inventario actual</p>
+            <div class="report-actions" style="margin-top: 1rem; display: flex; gap: 1rem;">
+                <a href="/reporte_inventario_pdf" class="btn btn-pdf" style="background: #e74c3c; color: #090909; border-radius: 6px; padding: 0.6rem 1.2rem; font-weight: 600; font-size: 1rem; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
                     <i class="fas fa-file-pdf"></i> PDF
                 </a>
-                <a href="{{ url_for('generate_inventory_report', formato='excel') }}" class="btn btn-excel">
+                <a href="/reporte_inventario_excel" class="btn btn-excel" style="background: #27ae60; color: #0c0c0c; border-radius: 6px; padding: 0.6rem 1.2rem; font-weight: 600; font-size: 1rem; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
                     <i class="fas fa-file-excel"></i> Excel
                 </a>
             </div>
         </div>
-        
-        <div class="report-card">
-            <h3><i class="fas fa-chart-line"></i> Reporte de Ventas</h3>
-            <p>Reporte detallado de ventas por período</p>
-            <form method="GET" action="{{ url_for('generate_sales_report') }}" class="report-form">
-                <div class="form-group">
-                    <label for="fecha_inicio">Fecha Inicio:</label>
-                    <input type="date" id="fecha_inicio" name="fecha_inicio" required>
-                </div>
-                <div class="form-group">
-                    <label for="fecha_fin">Fecha Fin:</label>
-                    <input type="date" id="fecha_fin" name="fecha_fin" required>
-                </div>
-                <div class="form-group">
-                    <label>Formato:</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="formato" value="pdf" checked> PDF</label>
-                        <label><input type="radio" name="formato" value="excel"> Excel</label>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-download"></i> Generar
-                </button>
-            </form>
+        <div class="report-card" style="background: #111111ce; border-radius: 12px; box-shadow: 0 2px 12px rgb(255, 255, 255); padding: 1.5rem 1.2rem; flex: 1 1 320px; min-width: 280px;">
+            <h3 style="color: var(--primary-color); font-size: 1.2rem; margin-bottom: 0.7rem;"><i class="fas fa-chart-line"></i> Reporte de Ventas</h3>
+            <p style="color: #fff;">Descarga el reporte de ventas completo en el formato que prefieras.</p>
+            <div class="report-actions" style="margin-top: 1rem; display: flex; gap: 1rem;">
+                <a href="/reporte_pdf" class="btn btn-pdf" style="background: #e74c3c; color: #0a0a0a; border-radius: 6px; padding: 0.6rem 1.2rem; font-weight: 600; font-size: 1rem; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </a>
+                <a href="/reporte_excel" class="btn btn-excel" style="background: #27ae60; color: #0a0a0a; border-radius: 6px; padding: 0.6rem 1.2rem; font-weight: 600; font-size: 1rem; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-file-excel"></i> Excel
+                </a>
+            </div>
         </div>
     </div>
 </div>

@@ -3,41 +3,48 @@
 {% block title %}Ventas{% endblock %}
 
 {% block content %}
-<div class="sales-container">
-    <div class="page-header">
-        <h2><i class="fas fa-cash-register"></i> Registro de Ventas</h2>
+<div class="sales-container" style="max-width: 1000px; margin: 2rem auto; padding: 1.2rem; background: rgba(69, 68, 68, 0.701); border-radius: 18px; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+        <h2 style="color: var(--primary-color); display: flex; align-items: center; gap: 0.7rem; font-size: 1.4rem;"><i class="fas fa-cash-register"></i> Registro de Ventas</h2>
         <div class="actions">
-            <a href="{{ url_for('new_sale') }}" class="btn btn-primary">
+            <button class="btn btn-primary" style="background: var(--primary-color); color: #fff; padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; border: none;" onclick="openSaleModal()">
                 <i class="fas fa-plus"></i> Nueva Venta
-            </a>
+            </button>
         </div>
     </div>
-    
     {% if ventas %}
-    <table class="data-table">
+    <div style="overflow-x:auto;">
+    <table class="data-table" style="width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(52, 152, 219, 0.08); font-size: 0.98rem;">
         <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>N° Venta</th>
-                <th>Productos</th>
-                <th>Total</th>
-                <th>Método Pago</th>
-                <th>Acciones</th>
+            <tr style="background: var(--primary-color); color: #fff;">
+                <th style="padding: 0.5rem;">Fecha</th>
+                <th style="padding: 0.5rem;">N° Venta</th>
+                <th style="padding: 0.5rem;">Productos</th>
+                <th style="padding: 0.5rem;">Total</th>
+                <th style="padding: 0.5rem;">Método Pago</th>
+                <th style="padding: 0.5rem;">Acciones</th>
             </tr>
         </thead>
         <tbody>
             {% for venta in ventas %}
-            <tr>
-                <td>{{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
-                <td>V-{{ venta._id }}</td>
-                <td>{{ venta.productos|length }}</td>
-                <td>${{ "%.2f"|format(venta.total) }}</td>
-                <td>{{ venta.metodo_pago|capitalize }}</td>
-                <td class="actions">
-                    <a href="#" class="btn btn-sm btn-view" title="Ver detalle">
+            <tr class="{% if loop.index0 % 2 == 0 %}even-row{% else %}odd-row{% endif %}">
+                <td style="padding: 0.5rem;">{{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td style="padding: 0.5rem;">V-{{ venta._id }}</td>
+                <td style="padding: 0.5rem;">{{ venta.productos|length if venta.productos is defined else venta.cantidad }}</td>
+                <td style="padding: 0.5rem;">${{ "%.2f"|format(venta.total) }}</td>
+                <td style="padding: 0.5rem;">{{ venta.metodo_pago|capitalize if venta.metodo_pago is defined else '-' }}</td>
+                <td class="actions" style="padding: 0.5rem; display: flex; gap: 0.3rem;">
+                    <button class="btn btn-sm btn-view" title="Ver detalle" style="background: var(--secondary-color); color: #fff; border-radius: 4px; padding: 0.3rem 0.6rem; display: inline-flex; align-items: center; border: none; cursor: pointer; font-size: 1rem;" onclick="openDetailModal(this)"
+                        data-fecha="{{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}"
+                        data-id="V-{{ venta._id }}"
+                        data-productos="{{ venta.productos|length if venta.productos is defined else venta.cantidad }}"
+                        data-total="${{ '%.2f'|format(venta.total) }}"
+                        data-metodo="{{ venta.metodo_pago|capitalize if venta.metodo_pago is defined else '-' }}"
+                        data-cliente="{{ venta.id_cliente if venta.id_cliente is defined else '-' }}"
+                        data-tipo="{{ venta.tipo|capitalize if venta.tipo is defined else '-' }}">
                         <i class="fas fa-eye"></i>
-                    </a>
-                    <a href="#" class="btn btn-sm btn-print" title="Imprimir">
+                    </button>
+                    <a href="#" class="btn btn-sm btn-print" title="Imprimir" style="background: #27ae60; color: #fff; border-radius: 4px; padding: 0.3rem 0.6rem; display: inline-flex; align-items: center; border: none; cursor: pointer; font-size: 1rem;">
                         <i class="fas fa-print"></i>
                     </a>
                 </td>
@@ -45,10 +52,89 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
     {% else %}
-    <div class="no-results">
-        <p>No hay ventas registradas</p>
+    <div class="no-results" style="text-align: center; margin-top: 2rem;">
+        <p style="color: #e74c3c; font-size: 1.1rem; font-weight: 500;">No hay ventas registradas</p>
     </div>
     {% endif %}
 </div>
+
+<!-- Modal para realizar venta -->
+<div id="saleModal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+    <div class="modal-content" style="background:#fff; border-radius:12px; max-width:420px; width:95%; margin:auto; padding:1.2rem 1rem; position:relative;">
+        <span class="close" onclick="closeSaleModal()" style="position:absolute; top:0.7rem; right:1rem; font-size:1.7rem; color:#e74c3c; cursor:pointer;">&times;</span>
+        <h3 style="color:var(--primary-color); margin-bottom:1rem; font-size:1.2rem;"><i class="fas fa-plus"></i> Nueva Venta</h3>
+        <form method="POST" action="{{ url_for('realizar_venta') }}">
+            <div class="form-group"><label>Producto:</label>
+                <select name="producto" required style="width:100%;padding:0.4rem;font-size:1rem;">
+                    <option value="">Seleccione...</option>
+                    {% for producto in productos %}
+                    <option value="{{ producto._id }}">{{ producto.nombre }} (Stock: {{ producto.stock }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group"><label>Cliente:</label>
+                <select name="cliente" required style="width:100%;padding:0.4rem;font-size:1rem;">
+                    <option value="">Seleccione...</option>
+                    {% for cliente in clientes %}
+                    <option value="{{ cliente._id }}">{{ cliente.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group"><label>Cantidad:</label>
+                <input type="number" name="cantidad" min="1" value="1" required style="width:100%;padding:0.4rem;font-size:1rem;">
+            </div>
+            <div style="display:flex;justify-content:center;gap:1rem;margin-top:1rem;">
+                <button type="submit" class="btn btn-primary" style="background:var(--primary-color);color:#fff;padding:0.5rem 1.2rem;border-radius:6px;font-weight:600;font-size:1rem;">Realizar Venta</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Detalle Venta -->
+<div id="detailModal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+    <div class="modal-content" style="background:#fff; border-radius:12px; max-width:400px; width:95%; margin:auto; padding:1.2rem 1rem; position:relative;">
+        <span class="close" onclick="closeDetailModal()" style="position:absolute; top:0.7rem; right:1rem; font-size:1.7rem; color:#e74c3c; cursor:pointer;">&times;</span>
+        <h3 style="color:var(--primary-color); margin-bottom:1rem; font-size:1.2rem;"><i class="fas fa-eye"></i> Detalle de Venta</h3>
+        <div id="detailContent">
+            <p><b>Fecha:</b> <span id="detalle_fecha"></span></p>
+            <p><b>N° Venta:</b> <span id="detalle_id"></span></p>
+            <p><b>Productos:</b> <span id="detalle_productos"></span></p>
+            <p><b>Total:</b> <span id="detalle_total"></span></p>
+            <p><b>Método Pago:</b> <span id="detalle_metodo"></span></p>
+            <p><b>Cliente:</b> <span id="detalle_cliente"></span></p>
+            <p><b>Tipo:</b> <span id="detalle_tipo"></span></p>
+        </div>
+    </div>
+</div>
+
+<script>
+function openSaleModal() {
+    document.getElementById('saleModal').style.display = 'flex';
+}
+function closeSaleModal() {
+    document.getElementById('saleModal').style.display = 'none';
+}
+function openDetailModal(btn) {
+    document.getElementById('detalle_fecha').textContent = btn.getAttribute('data-fecha');
+    document.getElementById('detalle_id').textContent = btn.getAttribute('data-id');
+    document.getElementById('detalle_productos').textContent = btn.getAttribute('data-productos');
+    document.getElementById('detalle_total').textContent = btn.getAttribute('data-total');
+    document.getElementById('detalle_metodo').textContent = btn.getAttribute('data-metodo');
+    document.getElementById('detalle_cliente').textContent = btn.getAttribute('data-cliente');
+    document.getElementById('detalle_tipo').textContent = btn.getAttribute('data-tipo');
+    document.getElementById('detailModal').style.display = 'flex';
+}
+function closeDetailModal() {
+    document.getElementById('detailModal').style.display = 'none';
+}
+</script>
+
+<style>
+.even-row { background: #f7f7f7; transition: background 0.2s; }
+.odd-row { background: #fff; transition: background 0.2s; }
+.data-table tr:hover { background: #ffe5e0 !important; }
+.modal { display: none; }
+</style>
 {% endblock %}

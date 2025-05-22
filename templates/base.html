@@ -8,6 +8,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="{{ url_for('dashboard') }}" style="display: flex; align-items: center; gap: 0.6rem; color: var(--primary-color); text-decoration: none; font-weight: bold; font-size: 1.3rem;">
+                <i class="fa-solid fa-toolbox"></i> Ferretería App
+            </a>
+        </div>
+        <ul class="navbar-links">
+            <li><a href="{{ url_for('mostrar_productos') }}"><i class="fa-solid fa-box"></i> Productos</a></li>
+            <li><a href="{{ url_for('mostrar_ventas') }}"><i class="fa-solid fa-cash-register"></i> Ventas</a></li>
+            <li><a href="{{ url_for('mostrar_clientes') }}"><i class="fa-solid fa-users"></i> Clientes</a></li>
+            <li><a href="{{ url_for('reportes') }}"><i class="fa-solid fa-file-lines"></i> Reportes</a></li>
+            {% if 'user_id' in session %}
+            <li><a href="{{ url_for('logout') }}" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
     <div class="container">
         {% if 'user_id' in session %}
         <header class="header">
@@ -20,7 +37,7 @@
         </main>
 
         <footer class="footer">
-            <p>Sistema de Ferretería &copy; {{ now.strftime('%Y') if now is defined else '2023' }}</p>
+            <p>Sistema de Ferretería &copy; {{ now.strftime('%Y') if now is defined else '2025' }}</p>
         </footer>
     </div>
 

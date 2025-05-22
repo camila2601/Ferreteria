@@ -1,11 +1,11 @@
 :root {
-    --primary-color: #d35400; /* Cambiado a naranja para ferretería */
+    --primary-color: #ee381c; /* Cambiado a naranja para ferretería */
     --secondary-color: #3498db;
     --success-color: #27ae60;
-    --danger-color: #e74c3c;
-    --warning-color: #f39c12;
-    --light-color: #ecf0f1;
-    --dark-color: #2c3e50;
+    --danger-color: #f7f2f1;
+    --warning-color: #f4ebeb;
+    --light-color: #c1ebf6;
+    --dark-color: #18181884;
 }
 
 * {
@@ -17,9 +17,9 @@
 
 body {
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                url('https://png.pngtree.com/thumb_back/fh260/background/20210910/pngtree-may-day-labor-day-wood-grain-hardware-tool-combination-photograph-with-image_845444.jpg') no-repeat center center fixed;
+                url('https://images.pexels.com/photos/3930091/pexels-photo-3930091.jpeg') no-repeat center center fixed;
     background-size: cover;
-    color: #333;
+    color: #050505;
     line-height: 1.6;
     min-height: 100vh;
 }
@@ -33,7 +33,7 @@ body {
 /* Header */
 .header {
     background-color: var(--primary-color);
-    color: white;
+    color: rgb(246, 197, 197);
     padding: 1rem;
     display: flex;
     justify-content: space-between;
@@ -54,7 +54,7 @@ body {
 }
 
 .nav a {
-    color: white;
+    color: rgb(34, 15, 175);
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -73,7 +73,7 @@ body {
 }
 
 .logout {
-    color: white;
+    color: rgb(220, 45, 45);
     font-size: 1.2rem;
 }
 
@@ -87,7 +87,7 @@ body {
 }
 
 .auth-form {
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: rgba(35, 34, 34, 0.682);
     border-radius: 10px;
     padding: 2.5rem;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
@@ -115,14 +115,14 @@ body {
     display: block;
     margin-bottom: 0.8rem;
     font-weight: 500;
-    color: #555;
+    color: #e44242;
     font-size: 1rem;
 }
 
 .auth-form .form-group input {
     width: 100%;
     padding: 0.8rem 1rem;
-    border: 1px solid #ddd;
+    border: 1px solid #dddddd;
     border-radius: 5px;
     font-size: 1rem;
     transition: all 0.3s;
@@ -138,7 +138,7 @@ body {
     width: 100%;
     padding: 0.8rem;
     background-color: var(--primary-color);
-    color: white;
+    color: rgb(18, 18, 18);
     border: none;
     border-radius: 5px;
     font-size: 1rem;
@@ -149,7 +149,7 @@ body {
 }
 
 .auth-form .btn:hover {
-    background-color: #e67e22;
+    background-color: #0b0b0b;
 }
 
 .auth-links {
@@ -166,7 +166,7 @@ body {
 }
 
 .auth-links a:hover {
-    color: #e67e22;
+    color: #070707;
     text-decoration: underline;
 }
 
@@ -180,13 +180,219 @@ body {
     color: var(--primary-color);
 }
 
-/* Resto de tu CSS se mantiene igual */
-/* ... (todo el resto de tu CSS original permanece igual) ... */
+/* ========== DASHBOARD STYLES ========== */
+.dashboard {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(90, 86, 86, 0.604);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+}
+
+.stats-grid {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    background: var(--primary-color);
+    color: #0c0c0c;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(238, 56, 28, 0.13);
+    padding: 2rem 2.5rem;
+    min-width: 220px;
+    flex: 1 1 220px;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 8px 32px rgba(238, 56, 28, 0.18);
+}
+
+.stat-icon {
+    font-size: 2.8rem;
+    background: #fff2;
+    border-radius: 50%;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+    color: #000000;
+}
+
+.stat-info p {
+    font-size: 2.1rem;
+    font-weight: bold;
+    margin: 0;
+    color: #000000;
+}
+
+.dashboard-sections {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.dashboard-sections section {
+    background: #131313;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(52, 152, 219, 0.08);
+    padding: 1.5rem 1.2rem;
+    flex: 1 1 350px;
+    min-width: 320px;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-sections h3 {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dashboard-sections table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.dashboard-sections th, .dashboard-sections td {
+    padding: 0.7rem 0.5rem;
+    text-align: left;
+}
+
+.dashboard-sections th {
+    background: var(--primary-color);
+    color: #000000;
+    font-weight: 600;
+}
+
+.dashboard-sections tr:nth-child(even) {
+    background: #3b13c8;
+}
+
+.dashboard-sections tr:hover {
+    background: #fabebe;
+}
+
+.stock-warning {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* ===== NAVBAR MODERNA ===== */
+.navbar {
+    width: 100%;
+    background: rgba(105, 105, 106, 0.925);
+    box-shadow: 0 2px 16px 0 rgba(31, 38, 135, 0.10);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 2.5vw;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.navbar-logo {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    letter-spacing: 1px;
+}
+
+.navbar-logo i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.navbar-links {
+    list-style: none;
+    display: flex;
+    gap: 1.2rem;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-links li {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-links a {
+    color: #222;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.05rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-links a:hover, .navbar-links .logout-btn:hover {
+    background: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(238,56,28,0.10);
+}
+
+.navbar-links .logout-btn {
+    background: #fff0f0;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+    font-weight: 600;
+    transition: background 0.18s, color 0.18s;
+}
+
+@media (max-width: 700px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.7rem 1vw;
+    }
+    .navbar-links {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.2rem;
+    }
+    .navbar-links a {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        font-size: 1rem;
+    }
+}
 
 /* Footer */
 .footer {
     background-color: var(--dark-color);
-    color: white;
+    color: rgb(248, 244, 244);
     text-align: center;
     padding: 1.2rem;
     margin-top: auto;

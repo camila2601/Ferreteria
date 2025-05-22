@@ -3,52 +3,61 @@
 {% block title %}Productos{% endblock %}
 
 {% block content %}
-<div class="products-container">
-    <div class="page-header">
-        <h2><i class="fas fa-boxes"></i> Gestión de Productos</h2>
+<div class="products-container" style="max-width: 1000px; margin: 2rem auto; padding: 1.2rem; background: rgba(65, 65, 65, 0.619); border-radius: 18px; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+        <h2 style="color: var(--primary-color); display: flex; align-items: center; gap: 0.7rem; font-size: 1.4rem;"><i class="fas fa-boxes"></i> Gestión de Productos</h2>
         <div class="actions">
-            <a href="{{ url_for('add_product') }}" class="btn btn-primary">
+            <a href="{{ url_for('nuevo_producto') }}" class="btn btn-primary" style="background: var(--primary-color); color: #fff; padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 2px 8px rgba(238,56,28,0.08); font-size: 1rem;">
                 <i class="fas fa-plus"></i> Nuevo Producto
             </a>
         </div>
     </div>
     
-    <div class="search-bar">
-        <form method="GET" action="{{ url_for('products') }}">
-            <input type="text" name="search" placeholder="Buscar productos..." value="{{ search }}">
-            <button type="submit" class="btn btn-secondary">
+    <div class="search-bar" style="margin-bottom: 1rem;">
+        <form method="GET" action="{{ url_for('mostrar_productos') }}" style="display: flex; gap: 0.5rem;">
+            <input type="text" name="search" placeholder="Buscar productos..." value="{{ search|default('') }}" style="flex: 1; padding: 0.5rem 0.8rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+            <button type="submit" class="btn btn-secondary" style="background: var(--secondary-color); color: #3a3939b6; border: none; border-radius: 5px; padding: 0.5rem 1rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; font-size: 1rem;">
                 <i class="fas fa-search"></i> Buscar
             </button>
         </form>
     </div>
     
     {% if productos %}
-    <table class="data-table">
+    <div style="overflow-x:auto;">
+    <table class="data-table" style="width: 100%; border-collapse: collapse; background: #434242ba; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(52, 152, 219, 0.08); font-size: 0.98rem;">
         <thead>
-            <tr>
-                <th>Código</th>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th>Categoría</th>
-                <th>Acciones</th>
+            <tr style="background: var(--primary-color); color: #fff;">
+                <th style="padding: 0.5rem;">Código</th>
+                <th style="padding: 0.5rem;">Nombre</th>
+                <th style="padding: 0.5rem;">Precio</th>
+                <th style="padding: 0.5rem;">Stock</th>
+                <th style="padding: 0.5rem;">Categoría</th>
+                <th style="padding: 0.5rem;">Acciones</th>
             </tr>
         </thead>
         <tbody>
             {% for producto in productos %}
-            <tr>
-                <td>{{ producto.codigo_barras or 'N/A' }}</td>
-                <td>{{ producto.nombre }}</td>
-                <td>${{ "%.2f"|format(producto.precio) }}</td>
-                <td class="{{ 'stock-warning' if producto.stock < producto.stock_minimo else '' }}">
-                    {{ producto.stock }}
-                </td>
-                <td>{{ producto.categoria }}</td>
-                <td class="actions">
-                    <a href="{{ url_for('edit_product', id=producto._id) }}" class="btn btn-sm btn-edit">
+            <tr class="{% if loop.index0 % 2 == 0 %}even-row{% else %}odd-row{% endif %}">
+                <td style="padding: 0.5rem;">{{ producto.codigo_barras or 'N/A' }}</td>
+                <td style="padding: 0.5rem;">{{ producto.nombre }}</td>
+                <td style="padding: 0.5rem;">${{ "%.2f"|format(producto.precio) }}</td>
+                <td class="{% if producto.stock < producto.stock_minimo %}stock-warning{% endif %}" style="padding: 0.5rem;">{{ producto.stock }}</td>
+                <td style="padding: 0.5rem;">{{ producto.categoria }}</td>
+                <td class="actions" style="padding: 0.5rem; display: flex; gap: 0.3rem;">
+                    <button class="btn btn-sm btn-edit" style="background: var(--secondary-color); color: #0a30c6; border-radius: 4px; padding: 0.3rem 0.6rem; display: inline-flex; align-items: center; border: none; cursor: pointer; font-size: 1rem;" onclick="openEditModal(this)" 
+                        data-id="{{ producto._id }}"
+                        data-nombre="{{ producto.nombre }}"
+                        data-codigo_barras="{{ producto.codigo_barras }}"
+                        data-precio="{{ producto.precio }}"
+                        data-costo="{{ producto.costo }}"
+                        data-stock="{{ producto.stock }}"
+                        data-stock_minimo="{{ producto.stock_minimo }}"
+                        data-categoria="{{ producto.categoria }}"
+                        data-proveedor="{{ producto.proveedor }}"
+                        data-descripcion="{{ producto.descripcion }}">
                         <i class="fas fa-edit"></i>
-                    </a>
-                    <a href="{{ url_for('delete_product', id=producto._id) }}" class="btn btn-sm btn-delete" onclick="return confirm('¿Eliminar este producto?')">
+                    </button>
+                    <a href="{{ url_for('eliminar_producto', id=producto._id) }}" class="btn btn-sm btn-delete" style="background: #e74c3c; color: #fff; border-radius: 4px; padding: 0.3rem 0.6rem; text-decoration: none; display: inline-flex; align-items: center; transition: background 0.2s; font-size: 1rem;" onclick="return confirm('¿Eliminar este producto?')">
                         <i class="fas fa-trash"></i>
                     </a>
                 </td>
@@ -56,26 +65,91 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
     
-    <div class="pagination">
+    {% if page is defined and total_pages is defined %}
+    <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 1.2rem; font-size: 1rem;">
         {% if page > 1 %}
-        <a href="{{ url_for('products', page=page-1, search=search) }}" class="btn btn-secondary">
+        <a href="{{ url_for('mostrar_productos', page=page-1, search=search) }}" class="btn btn-secondary" style="background: var(--secondary-color); color: #fff; border-radius: 5px; padding: 0.4rem 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 0.4rem; font-size: 1rem;">
             <i class="fas fa-arrow-left"></i> Anterior
         </a>
         {% endif %}
-        
-        <span>Página {{ page }} de {{ total_pages }}</span>
-        
+        <span style="font-weight: 600; color: var(--primary-color);">Página {{ page }} de {{ total_pages }}</span>
         {% if page < total_pages %}
-        <a href="{{ url_for('products', page=page+1, search=search) }}" class="btn btn-secondary">
+        <a href="{{ url_for('mostrar_productos', page=page+1, search=search) }}" class="btn btn-secondary" style="background: var(--secondary-color); color: #fff; border-radius: 5px; padding: 0.4rem 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 0.4rem; font-size: 1rem;">
             Siguiente <i class="fas fa-arrow-right"></i>
         </a>
         {% endif %}
     </div>
+    {% endif %}
     {% else %}
-    <div class="no-results">
-        <p>No se encontraron productos</p>
+    <div class="no-results" style="text-align: center; margin-top: 2rem;">
+        <p style="color: #e74c3c; font-size: 1.1rem; font-weight: 500;">No se encontraron productos</p>
     </div>
     {% endif %}
 </div>
+
+<!-- Modal para editar producto -->
+<div id="editProductModal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+    <div class="modal-content" style="background:#fff; border-radius:12px; max-width:400px; width:95%; margin:auto; padding:1.2rem 1rem; position:relative;">
+        <span class="close" onclick="closeEditModal()" style="position:absolute; top:0.7rem; right:1rem; font-size:1.7rem; color:#e74c3c; cursor:pointer;">&times;</span>
+        <h3 style="color:var(--primary-color); margin-bottom:1rem; font-size:1.2rem;"><i class="fas fa-edit"></i> Editar Producto</h3>
+        <form id="editProductForm">
+            <input type="hidden" id="edit_id" name="id">
+            <div class="form-group"><label>Nombre:</label><input type="text" id="edit_nombre" name="nombre" required style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div class="form-group"><label>Código de Barras:</label><input type="text" id="edit_codigo_barras" name="codigo_barras" style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div class="form-group"><label>Precio:</label><input type="number" id="edit_precio" name="precio" step="0.01" min="0" required style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div class="form-group"><label>Costo:</label><input type="number" id="edit_costo" name="costo" step="0.01" min="0" required style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div class="form-group"><label>Stock:</label><input type="number" id="edit_stock" name="stock" min="0" required style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div class="form-group"><label>Stock Mínimo:</label><input type="number" id="edit_stock_minimo" name="stock_minimo" min="0" required style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div class="form-group"><label>Categoría:</label><input type="text" id="edit_categoria" name="categoria" required style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div class="form-group"><label>Proveedor:</label><input type="text" id="edit_proveedor" name="proveedor" style="width:100%;padding:0.4rem;font-size:1rem;"></div>
+            <div class="form-group"><label>Descripción:</label><textarea id="edit_descripcion" name="descripcion" rows="2" style="width:100%;padding:0.4rem;font-size:1rem;"></textarea></div>
+            <div style="display:flex;justify-content:center;gap:1rem;margin-top:1rem;">
+                <button type="submit" class="btn btn-primary" style="background:var(--primary-color);color:#fff;padding:0.5rem 1.2rem;border-radius:6px;font-weight:600;font-size:1rem;">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openEditModal(btn) {
+    document.getElementById('edit_id').value = btn.getAttribute('data-id');
+    document.getElementById('edit_nombre').value = btn.getAttribute('data-nombre');
+    document.getElementById('edit_codigo_barras').value = btn.getAttribute('data-codigo_barras');
+    document.getElementById('edit_precio').value = btn.getAttribute('data-precio');
+    document.getElementById('edit_costo').value = btn.getAttribute('data-costo');
+    document.getElementById('edit_stock').value = btn.getAttribute('data-stock');
+    document.getElementById('edit_stock_minimo').value = btn.getAttribute('data-stock_minimo');
+    document.getElementById('edit_categoria').value = btn.getAttribute('data-categoria');
+    document.getElementById('edit_proveedor').value = btn.getAttribute('data-proveedor');
+    document.getElementById('edit_descripcion').value = btn.getAttribute('data-descripcion');
+    document.getElementById('editProductModal').style.display = 'flex';
+}
+function closeEditModal() {
+    document.getElementById('editProductModal').style.display = 'none';
+}
+document.getElementById('editProductForm').onsubmit = async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = Object.fromEntries(new FormData(form));
+    const response = await fetch('/editar_producto/' + data.id, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+    if (response.ok) {
+        location.reload();
+    } else {
+        alert('Error al editar producto');
+    }
+};
+</script>
+
+<style>
+.even-row { background: #f4cbcb; transition: background 0.2s; }
+.odd-row { background: #f1b8b8; transition: background 0.2s; }
+.data-table tr:hover { background: #cd2807 !important; }
+.modal { display: none; }
+</style>
 {% endblock %}
